@@ -9,9 +9,6 @@ load_dotenv()
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-for m in genai.list_models():
-    print(m.name, m.supported_generation_methods)
-
 def parse_document(file):
     if file.filename.endswith(".pdf"):
         reader = PyPDF2.PdfReader(file.file)
