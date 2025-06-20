@@ -9,3 +9,5 @@ requests
 fpdf
 wordcloud
 matplotlib
+google-generativeai
+python-dotenv
