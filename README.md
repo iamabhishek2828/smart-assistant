@@ -33,7 +33,7 @@ https://smart-assistant-abhi22.streamlit.app/
 - **Session Memory:** Context-aware Q&A and challenge evaluation.
 - **Visualization:** WordCloud and Matplotlib for document insights.
 
-![architecture diagram](https://i.imgur.com/6pQw5kV.png) <!-- Replace with your own diagram if available -->
+
 
 ---
 
