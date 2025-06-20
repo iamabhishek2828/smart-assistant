@@ -21,7 +21,7 @@ A GenAI-powered assistant that reads, summarizes, and reasons over your research
 
 ## 🖥️ Demo
 
-> _[Optional: Insert Loom/YouTube demo link or screenshots here]_
+https://smart-assistant-abhi22.streamlit.app/
 
 ---
 
