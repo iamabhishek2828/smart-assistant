@@ -29,6 +29,8 @@ with st.sidebar:
 
 st.title("🧠 Smart Assistant for Research Summarization")
 
+BACKEND_URL = "https://smart-assistant-backend-rf74.onrender.com"
+
 if "session_id" not in st.session_state:
     st.session_state.session_id = None
 if "history" not in st.session_state:
@@ -38,7 +40,7 @@ uploaded_file = st.file_uploader("📤 Upload PDF or TXT", type=["pdf", "txt"])
 if uploaded_file:
     st.info(f"**Uploaded:** `{uploaded_file.name}` ({uploaded_file.size/1024:.1f} KB)")
     with st.spinner("Analyzing document and generating summary..."):
-        res = requests.post("http://localhost:8000/upload", files={"file": uploaded_file})
+        res = requests.post(f"{BACKEND_URL}/upload", files={"file": uploaded_file})
         data = res.json()
         time.sleep(0.5)
     if "error" in data:
@@ -59,7 +61,7 @@ if st.session_state.session_id:
         question = st.text_input("Type your question about the document:")
         if st.button("Ask", key="ask_btn"):
             with st.spinner("Thinking..."):
-                res = requests.post("http://localhost:8000/ask", json={
+                res = requests.post(f"{BACKEND_URL}/ask", json={
                     "session_id": st.session_state.session_id,
                     "question": question
                 })
@@ -83,7 +85,7 @@ if st.session_state.session_id:
             selected_text = st.text_area("Paste or type a passage from the document:")
             followup_q = st.text_input("Your question about this passage:")
             if st.button("Ask about Passage"):
-                res = requests.post("http://localhost:8000/ask", json={
+                res = requests.post(f"{BACKEND_URL}/ask", json={
                     "session_id": st.session_state.session_id,
                     "question": f"{followup_q}\n\n[Context passage: {selected_text}]"
                 })
@@ -101,7 +103,7 @@ if st.session_state.session_id:
         if "challenge_qs" not in st.session_state:
             if st.button("Start Challenge"):
                 with st.spinner("Generating challenge questions..."):
-                    res = requests.post("http://localhost:8000/challenge", json={
+                    res = requests.post(f"{BACKEND_URL}/challenge", json={
                         "session_id": st.session_state.session_id,
                         "question": ""
                     })
@@ -113,7 +115,7 @@ if st.session_state.session_id:
                 st.session_state.challenge_answers[i] = st.text_input(f"Q{i+1}: {q}", value=st.session_state.challenge_answers[i], key=f"challenge_{i}")
             if st.button("Submit Answers"):
                 with st.spinner("Evaluating your answers..."):
-                    res = requests.post("http://localhost:8000/evaluate", json={
+                    res = requests.post(f"{BACKEND_URL}/evaluate", json={
                         "session_id": st.session_state.session_id,
                         "user_answers": st.session_state.challenge_answers
                     })
@@ -141,7 +143,7 @@ if st.session_state.session_id:
         st.subheader("Download Full Session as PDF")
         if st.session_state.session_id:
             if st.button("Download PDF Report"):
-                res = requests.post("http://localhost:8000/export_pdf", json={"session_id": st.session_state.session_id})
+                res = requests.post(f"{BACKEND_URL}/export_pdf", json={"session_id": st.session_state.session_id})
                 with open("session_report.pdf", "wb") as f:
                     f.write(res.content)
                 with open("session_report.pdf", "rb") as f:
@@ -150,7 +152,7 @@ if st.session_state.session_id:
     if st.session_state.session_id:
         if st.button("Show Word Cloud"):
             res = requests.post(
-                "http://localhost:8000/wordcloud",
+                f"{BACKEND_URL}/wordcloud",
                 json={"session_id": st.session_state.session_id, "question": ""}
             )
             if res.status_code == 200:
