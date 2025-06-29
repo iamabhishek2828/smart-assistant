@@ -119,9 +119,17 @@ if st.session_state.session_id:
                         "session_id": st.session_state.session_id,
                         "user_answers": st.session_state.challenge_answers
                     })
-                    feedback = res.json()["feedback"]
-                    for i, fb in enumerate(feedback):
-                        st.info(f"**Feedback for Q{i+1}:** {fb}")
+                    try:
+                        data = res.json()
+                    except Exception:
+                        st.error("Backend did not return valid JSON. Please try again.")
+                        st.stop()
+                    if "error" in data:
+                        st.error(f"Backend error: {data['error']}")
+                    else:
+                        feedback = data["feedback"]
+                        for i, fb in enumerate(feedback):
+                            st.info(f"**Feedback for Q{i+1}:** {fb}")
             if st.button("Reset Challenge"):
                 del st.session_state.challenge_qs
                 del st.session_state.challenge_answers

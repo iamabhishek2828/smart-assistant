@@ -45,9 +45,14 @@ async def challenge(req: QARequest):
 
 @app.post("/evaluate")
 async def evaluate(req: ChallengeRequest):
-    doc = sessions[req.session_id]
-    feedback = evaluate_answer(req.user_answers, doc["challenge_qs"], doc["chunks"])
-    return {"feedback": feedback}
+    try:
+        doc = sessions[req.session_id]
+        if not doc.get("challenge_qs"):
+            raise ValueError("No challenge questions found for this session. Please start a challenge first.")
+        feedback = evaluate_answer(req.user_answers, doc["challenge_qs"], doc["chunks"])
+        return {"feedback": feedback}
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/export_pdf")
 async def export_pdf(req: QARequest):
