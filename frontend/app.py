@@ -107,13 +107,23 @@ if st.session_state.session_id:
                         "session_id": st.session_state.session_id,
                         "question": ""
                     })
-                    st.session_state.challenge_qs = res.json()["questions"]
-                    st.session_state.challenge_answers = [""] * 3
-        if "challenge_qs" in st.session_state:
+                    questions = res.json().get("questions", [])
+                    if questions:
+                        st.session_state.challenge_qs = questions
+                        st.session_state.challenge_answers = [""] * len(questions)
+                    else:
+                        st.error("Failed to generate challenge questions. Try again.")
+            st.info("Click 'Start Challenge' to generate questions before submitting answers.")
+        else:
             st.write("#### Answer these questions:")
             for i, q in enumerate(st.session_state.challenge_qs):
-                st.session_state.challenge_answers[i] = st.text_input(f"Q{i+1}: {q}", value=st.session_state.challenge_answers[i], key=f"challenge_{i}")
-            if st.button("Submit Answers"):
+                st.session_state.challenge_answers[i] = st.text_input(
+                    f"Q{i+1}: {q}",
+                    value=st.session_state.challenge_answers[i],
+                    key=f"challenge_{i}"
+                )
+            submit_disabled = any(ans.strip() == "" for ans in st.session_state.challenge_answers)
+            if st.button("Submit Answers", disabled=submit_disabled):
                 with st.spinner("Evaluating your answers..."):
                     res = requests.post(f"{BACKEND_URL}/evaluate", json={
                         "session_id": st.session_state.session_id,
@@ -133,8 +143,6 @@ if st.session_state.session_id:
             if st.button("Reset Challenge"):
                 del st.session_state.challenge_qs
                 del st.session_state.challenge_answers
-        else:
-            st.info("Click 'Start Challenge' to generate questions before submitting answers.")
 
     # --- Conversation History Tab ---
     with tabs[2]:
