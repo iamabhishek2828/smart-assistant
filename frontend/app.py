@@ -133,6 +133,8 @@ if st.session_state.session_id:
             if st.button("Reset Challenge"):
                 del st.session_state.challenge_qs
                 del st.session_state.challenge_answers
+        else:
+            st.info("Click 'Start Challenge' to generate questions before submitting answers.")
 
     # --- Conversation History Tab ---
     with tabs[2]:
