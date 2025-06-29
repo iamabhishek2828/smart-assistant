@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
 from utils import parse_document, get_summary, answer_question, generate_logic_questions, evaluate_answer, generate_wordcloud
 from fpdf import FPDF
+import uuid
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
@@ -22,7 +23,7 @@ class ChallengeRequest(BaseModel):
 async def upload(file: UploadFile = File(...)):
     try:
         content, chunks = parse_document(file)
-        session_id = str(hash(content))
+        session_id = str(uuid.uuid4())  # Use a unique session ID
         sessions[session_id] = {"content": content, "chunks": chunks, "history": [], "challenge_qs": []}
         summary = get_summary(content)
         return {"session_id": session_id, "summary": summary}

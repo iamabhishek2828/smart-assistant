@@ -48,7 +48,12 @@ if uploaded_file:
     else:
         st.session_state.session_id = data["session_id"]
         st.session_state.history = []
-        st.session_state["summary"] = data["summary"]  # <--- cache summary!
+        st.session_state["summary"] = data["summary"]
+        # Reset challenge state on new upload
+        if "challenge_qs" in st.session_state:
+            del st.session_state["challenge_qs"]
+        if "challenge_answers" in st.session_state:
+            del st.session_state["challenge_answers"]
         st.success("✅ Document uploaded and summarized!")
         st.write("### 📑 Document Summary")
         st.info(data["summary"])
