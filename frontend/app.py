@@ -41,7 +41,11 @@ if uploaded_file:
     st.info(f"**Uploaded:** `{uploaded_file.name}` ({uploaded_file.size/1024:.1f} KB)")
     with st.spinner("Analyzing document and generating summary..."):
         res = requests.post(f"{BACKEND_URL}/upload", files={"file": uploaded_file})
-        data = res.json()
+        try:
+            data = res.json()
+        except Exception:
+            st.error("Backend did not return valid JSON. Please check backend logs.")
+            st.stop()
         time.sleep(0.5)
     if "error" in data:
         st.error(f"Backend error: {data['error']}")
