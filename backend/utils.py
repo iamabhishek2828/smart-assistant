@@ -54,7 +54,9 @@ def generate_logic_questions(chunks):
     prompt = f"Generate three logic-based or comprehension-focused questions based on this document:\n\n{context}"
     model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
     response = model.generate_content(prompt)
+    print("Gemini challenge response:", repr(response.text))
     questions = [q.strip("- ").strip() for q in response.text.strip().split("\n") if q.strip()]
+    print("Parsed questions:", questions)
     return questions[:3]
 
 def evaluate_answer(user_answers, questions, chunks):
