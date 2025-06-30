@@ -116,12 +116,17 @@ if st.session_state.session_id:
                         "session_id": st.session_state.session_id,
                         "question": ""
                     })
-                    questions = res.json().get("questions", [])
+                    try:
+                        data = res.json()
+                    except Exception:
+                        st.error("Backend did not return valid JSON. Please check backend logs.")
+                        st.stop()
+                    questions = data.get("questions", [])
                     if questions:
                         st.session_state.challenge_qs = questions
                         st.session_state.challenge_answers = [""] * len(questions)
                     else:
-                        st.error("Failed to generate challenge questions. Try again.")
+                        st.error(f"Failed to generate challenge questions. Backend says: {data.get('error', 'Unknown error')}")
             st.info("Click 'Start Challenge' to generate questions before submitting answers.")
         else:
             st.write("#### Answer these questions:")
