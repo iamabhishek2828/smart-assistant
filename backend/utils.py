@@ -4,6 +4,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+import time
 
 load_dotenv()
 
@@ -21,7 +22,9 @@ def parse_document(file):
 
 def get_summary(content):
     model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
+    start = time.time()
     response = model.generate_content(f"Summarize the following document in less than 150 words:\n\n{content[:4000]}")
+    print("Gemini summary time:", time.time() - start)
     return response.text.strip()
 
 def answer_question(question, chunks, history):
