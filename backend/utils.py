@@ -15,7 +15,7 @@ def parse_document(file):
         content = "\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
     else:
         content = file.file.read().decode("utf-8")
-    # Simple chunking
+    
     chunks = [content[i:i+1500] for i in range(0, len(content), 1500)]
     return content, chunks
 
