@@ -56,6 +56,8 @@ def generate_logic_questions(chunks):
     response = model.generate_content(prompt)
     print("Gemini challenge response:", repr(response.text))
     questions = [q.strip("- ").strip() for q in response.text.strip().split("\n") if q.strip()]
+    # Skip intro lines that don't look like questions
+    questions = [q for q in questions if q[0].isdigit() or q.startswith("Q")]
     print("Parsed questions:", questions)
     return questions[:3]
 
